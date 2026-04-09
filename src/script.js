@@ -1,21 +1,21 @@
 // Пишем в ООП стиле на классах
 
-class todo {
+class Todo {
   // Объект хранит CSS классы, обращаемся через даты атрибуты
   selectors = {
-    root: ['data-js-todo'],
-    newTaskForm: ['data-js-todo-new-task-form'],
-    newTaskInput: ['data-js-todo-new-task-input'],
-    searchTaskForm: ['data-js-todo-search-task-form'],
-    searchTaskInput: ['data-js-todo-search-task-input'],
-    totalTasks: ['data-js-todo-total-tasks'],
-    deleteAllButton: ['data-js-todo-delete-all-button'],
-    list: ['data-js-todo-list'],
-    item: ['data-js-todo-item'],
-    itemCheckbox: ['data-js-todo-item-checkbox'],
-    itemLabel: ['data-js-todo-item-label'],
-    itemDeleteButton: ['data-js-todo-item-delete-button'],
-    emptyMessage: ['data-js-todo-empty-message'],
+    root: '[data-js-todo]',
+    newTaskForm: '[data-js-todo-new-task-form]',
+    newTaskInput: '[data-js-todo-new-task-input]',
+    searchTaskForm: '[data-js-todo-search-task-form]',
+    searchTaskInput: '[data-js-todo-search-task-input]',
+    totalTasks: '[data-js-todo-total-tasks]',
+    deleteAllButton: '[data-js-todo-delete-all-button]',
+    list: '[data-js-todo-list]',
+    item: '[data-js-todo-item]',
+    itemCheckbox: '[data-js-todo-item-checkbox]',
+    itemLabel: '[data-js-todo-item-label]',
+    itemDeleteButton: '[data-js-todo-item-delete-button]',
+    emptyMessage: '[data-js-todo-empty-message]',
   }
 
   // Объект хранит CSS классы состояний:
@@ -48,7 +48,6 @@ class todo {
     this.bindEvents()
   }
 
-  //
   getItemsFromLocalStorage() {
     const rawData = localStorage.getItem(this.localStorageKey)
 
@@ -58,7 +57,6 @@ class todo {
 
     try {
       const parsedData = JSON.parse(rawData)
-
       return Array.isArray(parsedData) ? parsedData : []
     } catch {
       console.error('Todo items parse error')
@@ -85,7 +83,7 @@ class todo {
 
     const items = this.state.filteredItems ?? this.state.items
 
-    this.listElement.innerHTML = items.map(({id, title, isChecked}) => `
+    this.listElement.innerHTML = items.map(({ id, title, isChecked }) => `
       <li class="todo__item todo-item" data-js-todo-item>
       <input
         type="checkbox"
@@ -103,7 +101,6 @@ class todo {
       </label>
       <button
         class="todo-item__delete-button"
-        type="button"
         aria-label="Delete"
         title="Delete"
         data-js-todo-item-delete-button
