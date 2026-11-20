@@ -1,6 +1,3 @@
-// Адрес нашего бэкенда. 
-// ВАЖНО: Если фронтенд и бэкенд работают в docker-compose, лучше использовать относительный путь '/api/todos' 
-// или имя сервиса, иначе браузер будет стучаться в localhost вашей машины, а не контейнера.
 const API_URL = 'http://localhost:3000/api/todos';
 
 class TodoApp {
@@ -10,7 +7,6 @@ class TodoApp {
       searchQuery: ''
     };
 
-    // Привязываем элементы DOM строго по data-атрибутам из вашего index.html
     this.formAdd = document.querySelector('[data-js-todo-new-task-form]');
     this.inputAdd = document.querySelector('[data-js-todo-new-task-input]');
     this.formSearch = document.querySelector('[data-js-todo-search-task-form]');
@@ -47,7 +43,7 @@ class TodoApp {
     const newTodo = {
       id: crypto?.randomUUID() ?? Date.now().toString(),
       title: title.trim(),
-      is_checked: false, // Используем snake_case, как в вашей БД
+      is_checked: false, 
     };
 
     try {
@@ -60,7 +56,7 @@ class TodoApp {
       if (response.ok) {
         this.state.items.push(newTodo);
         this.inputAdd.value = '';
-        this.state.searchQuery = ''; // Сбрасываем поиск при добавлении
+        this.state.searchQuery = ''; 
         this.inputSearch.value = '';
         this.render();
       }
@@ -109,7 +105,6 @@ class TodoApp {
     }
   }
 
-  // ИСПРАВЛЕННЫЙ РЕНДЕР: Теперь он полностью соответствует оригинальному HTML и CSS
   render() {
     const query = this.state.searchQuery.toLowerCase();
     const filteredItems = this.state.items.filter(item => 
@@ -118,7 +113,10 @@ class TodoApp {
 
     this.totalTasksEl.textContent = this.state.items.length;
 
-    // Показываем сообщение о пустом списке или отсутствии результатов поиска
+    if (this.deleteAllBtn) {
+      this.deleteAllBtn.classList.toggle('is-visible', this.state.items.length > 0);
+    }
+
     if (this.state.items.length === 0) {
       this.emptyMessageEl.textContent = 'There are no tasks yet';
       this.emptyMessageEl.style.display = 'block';
@@ -129,7 +127,6 @@ class TodoApp {
       this.emptyMessageEl.style.display = 'none';
     }
 
-    // Генерируем HTML точно так же, как в оригинальном TodoList
     this.listEl.innerHTML = filteredItems.map(item => `
       <li class="todo__item todo-item" data-js-todo-item>
         <input
@@ -160,20 +157,17 @@ class TodoApp {
     `).join('');
   }
 
-  // ИСПРАВЛЕННЫЕ СОБЫТИЯ
   bindEvents() {
     this.formAdd.addEventListener('submit', (e) => {
       e.preventDefault();
       this.addItem(this.inputAdd.value);
     });
 
-    // ИСПРАВЛЕНО: вешаем событие input на сам input, а не на форму
     this.inputSearch.addEventListener('input', (e) => {
       this.state.searchQuery = e.target.value;
       this.render();
     });
 
-    // Делегирование событий для кликов по списку (чекбоксы и кнопки удаления)
     this.listEl.addEventListener('change', (e) => {
       if (e.target.matches('[data-js-todo-item-checkbox]')) {
         this.toggleItem(e.target.id);
@@ -186,7 +180,6 @@ class TodoApp {
         const itemEl = deleteBtn.closest('[data-js-todo-item]');
         const checkbox = itemEl.querySelector('[data-js-todo-item-checkbox]');
         
-        // Добавляем класс для анимации исчезновения (как в оригинале)
         itemEl.classList.add('is-disappearing');
         setTimeout(() => {
           this.deleteItem(checkbox.id);
