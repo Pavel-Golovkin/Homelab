@@ -1,0 +1,40 @@
+services:
+  db:
+    image: postgres:16-alpine # Легковесный образ Postgres
+    environment:
+      POSTGRES_USER: todo_user
+      POSTGRES_PASSWORD: todo_password
+      POSTGRES_DB: todo_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U todo_user -d todo_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: ./backend
+    environment:
+      - PORT=3000
+      - DATABASE_URL=postgres://todo_user:todo_password@db:5432/todo_db
+    ports:
+      - "3000:3000"
+    depends_on:
+      db:
+        condition: service_healthy # Ждет, пока БД не пройдет healthcheck
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:8080"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data: # Данные БД будут сохраняться даже при перезапуске контейнеров
